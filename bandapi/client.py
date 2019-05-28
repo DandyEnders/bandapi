@@ -150,6 +150,13 @@ class APIClient:
         #result_data = pd.DataFrame.from_records(result_data['bands'])
         return result_data
 
+    def get_specific_post(self,
+                          band_key: str,
+                          post_key: str,
+                          ):
+        # TODO:
+        raise NotImplementedError
+
     def write_post(self,
                    band_key,
                    content,
@@ -168,6 +175,57 @@ class APIClient:
         url = "https://openapi.band.us/v2.2/band/post/create"
         result_data = self.api_request('post', url, kwargs)
         return result_data
+
+    def delete_post(self,
+                    band_key: str,
+                    post_key: str,
+                    ):
+        # TODO:
+        raise NotImplementedError
+
+    def get_comments(self,
+                     band_key: str,
+                     post_key: str,
+                     sortby: str = '+created_at',
+                     ):
+        # TODO:
+        raise NotImplementedError
+
+    def write_comment(self,
+                      band_key: str,
+                      post_key: str,
+                      body: str,
+                      ):
+        # TODO:
+        raise NotImplementedError
+
+    def delete_comment(self,
+                       band_key: str,
+                       post_key: str,
+                       comment_key: str,  # post_key on api doc
+                       ):
+        # TODO:
+        raise NotImplementedError
+
+    def check_permission(self,
+                         band_key: str,
+                         permissions: str,  # posting, commenting, contents_deletion
+                         ):
+        # TODO:
+        raise NotImplementedError
+
+    def get_albums(self,
+                   band_key: str,
+                   ):
+        # TODO:
+        raise NotImplementedError
+
+    def get_photos(self,
+                   band_key: str,
+                   photo_album_key: str = None,
+                   ):
+        # TODO:
+        raise NotImplementedError
 
 
 class APIClientTest(unittest.TestCase):
