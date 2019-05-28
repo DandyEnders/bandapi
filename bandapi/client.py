@@ -3,7 +3,6 @@ import json
 
 import requests
 
-from bandapi.util import api_request
 from bandapi import auth
 
 import pandas as pd
@@ -138,7 +137,7 @@ class APIClient:
                   ):
         """
         Gets list of posts.
-        
+
         Band API only allows 20 posts to be cralwed per request.
         "limit" parameter does not work.
 
@@ -158,7 +157,7 @@ class APIClient:
                    do_push=''):
         """
         NOT TESTED
-        
+
         Uploads a post.
 
         Warning
@@ -182,4 +181,3 @@ class APIClientTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
