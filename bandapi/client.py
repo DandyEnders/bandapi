@@ -142,8 +142,7 @@ class APIClient:
         "limit" parameter does not work.
 
         Return
-            pd.DataFrame
-                columns: [band_key, cover, member_count, name]
+            dictionary
         """
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/posts"
@@ -161,7 +160,7 @@ class APIClient:
         Uploads a post.
 
         Warning
-            Contents seems to work only with English.
+            Contents seems to work only with English words.
         """
         kwargs = locals()  # function param=arg dict
         kwargs['content'] = kwargs['content'].replace(

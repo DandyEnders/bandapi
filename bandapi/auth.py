@@ -17,6 +17,7 @@ def get_auth_code(client_id=config.CLIENT_ID,
         client_redirect_url:str
 
     Description
+        Gets autho_code from http request.
         Asks user to do the http request on browser because
         getting auth_code requires login session.
 
@@ -74,7 +75,9 @@ def get_auth_profile(auth_code=None,
             "token_type": "bearer",
             "refresh_token": "{refresh_token_str}",
             "expires_in": {time_int},
-            "scope": "WRITE_POST READ_MY_PROFILE READ_POST DELETE_POST READ_ALBUM READ_PHOTO READ_BAND_PERMISSION READ_COMMENT READ_BAND_AND_USERS_LIST DELETE_COMMENT CREATE_COMMENT",
+            "scope": "WRITE_POST READ_MY_PROFILE READ_POST DELETE_POST READ_ALBUM \
+                        READ_PHOTO READ_BAND_PERMISSION READ_COMMENT \
+                        READ_BAND_AND_USERS_LIST DELETE_COMMENT CREATE_COMMENT",
             "user_key": "{user_key_str}"
         }
     """
@@ -127,8 +130,20 @@ def get_access_token(auth_code=None,
     """
     Gets access_token.
 
-    This method is for encapsulation.
-    View get_auth_profile for details.
+    Description
+        This method encapsulates process of 
+        getting access_token.
+        View get_auth_profile for details.
+    
+    Return
+        dict
+            "access_token": {str},
+            "token_type": {str},
+            "refresh_token": {str},
+            "expires_in": {int},
+            "scope": {str},
+            "user_key": {str}
+
     """
     profile = get_auth_profile(auth_code=auth_code,
                                client_id=client_id,
