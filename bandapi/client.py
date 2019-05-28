@@ -14,6 +14,8 @@ class APIClient:
 
     If any optional argument is None, the arugment will not be
     part of url to request. (Ex. client.get_profile(get_profile=None))
+    
+    Limit parameter does not work. ( fixed on 20 always )
     """
 
     def __init__(self,
@@ -154,24 +156,39 @@ class APIClient:
                           band_key: str,
                           post_key: str,
                           ):
-        # TODO:
-        raise NotImplementedError
+        """
+        Return
+            dictionary
+        """
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2.1/band/post"
+        result_data = self.api_request('get', url, kwargs)
+
+        return result_data
 
     def write_post(self,
-                   band_key,
-                   content,
-                   do_push=''):
+                   band_key: str,
+                   content: str,
+                   do_push: bool = None):
         """
-        NOT TESTED
+        NOT TESTED FOR OTHER LANGUAGES
 
         Uploads a post.
 
         Warning
-            Contents seems to work only with English words.
+            1. Contents seems to work only with English words.
+            2. function for do_push is unknown.
+            3. doc says do_push sends a push notifications to all members who have subscribed to it.
         """
         kwargs = locals()  # function param=arg dict
         kwargs['content'] = kwargs['content'].replace(
             ' ', '%20')  # all space = %20
+        
+        if kwargs['do_push'] is True:
+            kwargs['do_push'] = 'true'
+        elif kwargs['do_push'] is False:
+            kwargs['do_push'] = 'false'
+            
         url = "https://openapi.band.us/v2.2/band/post/create"
         result_data = self.api_request('post', url, kwargs)
         return result_data
@@ -180,52 +197,86 @@ class APIClient:
                     band_key: str,
                     post_key: str,
                     ):
-        # TODO:
-        raise NotImplementedError
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/post/remove"
+        result_data = self.api_request('post', url, kwargs)
+        
+        #TODO: when result_data['message'] == 'Invalid response' -> failed to delete
+
+        return result_data
 
     def get_comments(self,
                      band_key: str,
                      post_key: str,
                      sortby: str = '+created_at',
                      ):
-        # TODO:
-        raise NotImplementedError
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/post/comments"
+        result_data = self.api_request('get', url, kwargs)
+
+        return result_data
 
     def write_comment(self,
                       band_key: str,
                       post_key: str,
                       body: str,
                       ):
-        # TODO:
-        raise NotImplementedError
+        """
+        Commenting korean, spaces worked.
+        """
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/post/comment/create"
+        result_data = self.api_request('post', url, kwargs)
+
+        return result_data
 
     def delete_comment(self,
                        band_key: str,
                        post_key: str,
                        comment_key: str,  # post_key on api doc
                        ):
-        # TODO:
-        raise NotImplementedError
+        """
+        Tested with comment_key as kwarg, it worked.
+        """
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/post/comment/remove"
+        result_data = self.api_request('post', url, kwargs)
+
+        return result_data
 
     def check_permission(self,
                          band_key: str,
                          permissions: str,  # posting, commenting, contents_deletion
                          ):
-        # TODO:
-        raise NotImplementedError
+        """
+        Pass on permission to check, return if client has permission
+        pass permisssion = posting,
+        return posting -> has posting permission
+        """
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/permissions"
+        result_data = self.api_request('get', url, kwargs)
+
+        return result_data
 
     def get_albums(self,
                    band_key: str,
                    ):
-        # TODO:
-        raise NotImplementedError
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/albums"
+        result_data = self.api_request('get', url, kwargs)
+
+        return result_data
 
     def get_photos(self,
                    band_key: str,
                    photo_album_key: str = None,
                    ):
-        # TODO:
-        raise NotImplementedError
+        kwargs = locals()  # function param=arg dict
+        url = "https://openapi.band.us/v2/band/album/photos"
+        result_data = self.api_request('get', url, kwargs)
+
+        return result_data
 
 
 class APIClientTest(unittest.TestCase):
@@ -237,4 +288,5 @@ class APIClientTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    c = APIClient()
