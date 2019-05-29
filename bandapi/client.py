@@ -141,7 +141,8 @@ class APIClient:
 
     def get_posts(self,
                   band_key: str,
-                  locale: str = 'ko_KR'
+                  locale: str = 'ko_KR',
+                  after: str = None,
                   ):
         """
         Gets list of posts.
@@ -216,6 +217,7 @@ class APIClient:
                      band_key: str,
                      post_key: str,
                      sortby: str = '+created_at',
+                     after: str = None,
                      ):
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/post/comments"
@@ -268,6 +270,7 @@ class APIClient:
 
     def get_albums(self,
                    band_key: str,
+                   after: str = None,
                    ):
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/albums"
@@ -278,6 +281,7 @@ class APIClient:
     def get_photos(self,
                    band_key: str,
                    photo_album_key: str = None,
+                   after: str = None,
                    ):
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/album/photos"
