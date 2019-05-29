@@ -79,7 +79,6 @@ class APIClient:
             return content_dict, reason
 
         content_dict, reason = do_call()
-
         if reason == 'ok':
             result_data = content_dict.get('result_data', {})
         else:
@@ -99,6 +98,11 @@ class APIClient:
         # TODO: error handler for result_code status
         # result_code = content_dict.get('result_code', 0)
         # maybe just pass result_code onto other method to deal with it?
+        code = int(content_dict['result_code'])
+        if code != 1:
+            msg = result_data['message']
+            msg = f'code {code}: {msg}'
+            result_data['message'] = msg
 
         return result_data
 
@@ -143,6 +147,7 @@ class APIClient:
                   band_key: str,
                   locale: str = 'ko_KR',
                   after: str = None,
+                  limit: int = 20,
                   ):
         """
         Gets list of posts.
@@ -156,8 +161,28 @@ class APIClient:
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/posts"
         result_data = self.api_request('get', url, kwargs)
-        # result_data = pd.DataFrame.from_records(result_data['bands'])
-        return result_data
+
+        result_df = pd.DataFrame.from_records(result_data['items'])
+        after = result_data['paging'].get('next_params', None)
+        if after is not None:
+            after = after['after']
+        
+        if limit is not None and len(result_df) > limit and limit < 20:
+            result_df = result_df.iloc[:limit].copy()
+            
+        yield result_df, after
+
+        while after is not None and (limit is None or len(result_df) < limit):
+            kwargs['after'] = after
+            result_data = self.api_request('get', url, kwargs)
+            result_df = pd.DataFrame.from_records(result_data['items'])
+            #result_df = pd.concat([result_df, new_df])
+
+            after = result_data['paging'].get('next_params', None)
+            if after is not None:
+                after = after['after']
+
+            yield result_df, after
 
     def get_specific_post(self,
                           band_key: str,
@@ -180,6 +205,8 @@ class APIClient:
         """
         NOT TESTED FOR OTHER LANGUAGES
 
+        cooldown = 10 seconds
+        
         Uploads a post.
 
         Warning
@@ -205,10 +232,12 @@ class APIClient:
                     band_key: str,
                     post_key: str,
                     ):
+        """
+        cooldown = 10 seconds
+        """
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/post/remove"
         result_data = self.api_request('post', url, kwargs)
-
         # TODO: when result_data['message'] == 'Invalid response' -> failed to delete
 
         return result_data
@@ -245,6 +274,8 @@ class APIClient:
                        comment_key: str,  # post_key on api doc
                        ):
         """
+        cooldown = 10 seconds
+        
         Tested with comment_key as kwarg, it worked.
         """
         kwargs = locals()  # function param=arg dict
@@ -262,11 +293,16 @@ class APIClient:
         pass permisssion = posting,
         return posting -> has posting permission
         """
+        perm_list = ['posting', 'commenting', 'contents_deletion']
+        if permissions not in perm_list:
+            raise ValueError(f'Param permissions must be one of {perm_list}')
+        
         kwargs = locals()  # function param=arg dict
         url = "https://openapi.band.us/v2/band/permissions"
         result_data = self.api_request('get', url, kwargs)
+        has_permission = bool(result_data['permissions'])
 
-        return result_data
+        return has_permission
 
     def get_albums(self,
                    band_key: str,
