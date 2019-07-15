@@ -1,3 +1,7 @@
+# DEPRECATED
+I gave up developing this after I tested out that band has 10 seconds cooldown on posting / deleting comments / posts.
+I initially developed this to use this to post updates but cooldowns are way too long for me to use.
+
 
 # bandapi
 
